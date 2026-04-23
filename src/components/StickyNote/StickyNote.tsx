@@ -24,10 +24,10 @@ const StickyNote = ({ id }: { id: string }) => {
         <article className="sticky-note"
             style={{ width: note.size?.width, height: note.size?.height, left: note.position.x, top: note.position.y, backgroundColor: note.backgroundColor }}
             ref={noteRef}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}>
-            <div className="sticky-note-drag-handle"></div>
+        >
+            <div className="sticky-note-drag-handle" onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}></div>
             <textarea className="sticky-note_text-content" placeholder="Write your note here..."
                 value={noteValue}
                 onChange={(e) => setNoteValue(e.target.value)}
