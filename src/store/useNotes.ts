@@ -32,9 +32,11 @@ export const useNotesStore = create<NotesState>()(
         removeNote: (id) =>
           set(
             (state) => {
-              const { [id]: _, ...rest } = state.notes;
+              const notes = Object.fromEntries(
+                Object.entries(state.notes).filter(([key]) => key !== id),
+              );
               return {
-                notes: rest,
+                notes,
                 noteOrder: state.noteOrder.filter((noteId) => noteId !== id),
               };
             },
