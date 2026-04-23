@@ -8,7 +8,7 @@ export function useDrag(id: string, noteRef: React.RefObject<HTMLDivElement | nu
     const offset = useRef({ x: 0, y: 0 });
     const position = useRef({ x: 0, y: 0 });
 
-    const onPointerDown = useCallback((e: React.PointerEvent) => {
+    const onStartDragNote = useCallback((e: React.PointerEvent) => {
         const note = useNotesStore.getState().notes[id];
         if (!note) return;
         isDragging.current = true;
@@ -22,7 +22,7 @@ export function useDrag(id: string, noteRef: React.RefObject<HTMLDivElement | nu
         e.currentTarget.setPointerCapture(e.pointerId);
     }, [id]);
 
-    const onPointerMove = useCallback((e: React.PointerEvent) => {
+    const onDragNote = useCallback((e: React.PointerEvent) => {
         if (!isDragging.current || !noteRef.current) return;
         const x = e.clientX - offset.current.x;
         const y = e.clientY - offset.current.y;
@@ -31,7 +31,7 @@ export function useDrag(id: string, noteRef: React.RefObject<HTMLDivElement | nu
         noteRef.current.style.top = `${y}px`;
     }, [noteRef]);
 
-    const onPointerUp = useCallback(() => {
+    const onDropNote = useCallback(() => {
         if (!isDragging.current) return;
         isDragging.current = false;
 
@@ -50,8 +50,8 @@ export function useDrag(id: string, noteRef: React.RefObject<HTMLDivElement | nu
     }, [id, updateNote]);
 
     return {
-        onPointerDown,
-        onPointerMove,
-        onPointerUp,
+        onStartDragNote,
+        onDragNote,
+        onDropNote,
     };
 }
