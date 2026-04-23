@@ -45,6 +45,25 @@ export function useResize(
     }, [noteRef]);
 
 
+    const onResizeNoteEnd = useCallback(() => {
+        if (!resizing.current || !noteRef.current) return;
+        resizing.current = false;
 
-    return { onStartResizeNote, onResizeNote };
+        const rect = noteRef.current.getBoundingClientRect();
+
+        if (!note) return;
+        const width = Math.round(rect.width);
+        const height = Math.round(rect.height);
+
+        if (
+            note?.size?.width !== width ||
+            note?.size?.height !== height
+        ) {
+            updateNote(id, {
+                size: { width, height },
+            });
+        }
+    }, [id, note, updateNote, noteRef]);
+
+    return { onStartResizeNote, onResizeNote, onResizeNoteEnd };
 }

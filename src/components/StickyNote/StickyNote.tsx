@@ -12,7 +12,7 @@ const StickyNote = ({ id }: { id: string }) => {
     const { trashRef } = useBoardContext();
 
     const { onStartDragNote, onDragNote, onDropNote } = useDrag(id, noteRef, trashRef);
-    const { onStartResizeNote, onResizeNote } = useResize(id, noteRef);
+    const { onStartResizeNote, onResizeNote, onResizeNoteEnd } = useResize(id, noteRef);
 
     const updateNote = useNotesStore((s) => s.updateNote);
     const [noteValue, setNoteValue] = useState(note?.textContent ?? "");
@@ -50,6 +50,7 @@ const StickyNote = ({ id }: { id: string }) => {
             <div className="sticky-note-resize-handler"
                 onPointerDown={onStartResizeNote}
                 onPointerMove={onResizeNote}
+                onPointerUp={onResizeNoteEnd}
             ></div>
         </article>
     )
