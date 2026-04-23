@@ -52,7 +52,19 @@ export function useDrag(id: string, noteRef: React.RefObject<HTMLDivElement | nu
                 noteRect.bottom > trashRect.top;
 
             if (isOverTrash) {
-                removeNote(note.id);
+                const confirmed = window.confirm("Are you sure, you want to delete this note?");
+                if (confirmed) {
+                    removeNote(note.id);
+                    return;
+                } else {
+                    // Restore to initial position if user cancel the action
+                    if (noteRef.current) {
+                        noteRef.current.style.left = `${initialPosition.current.x}px`;
+                        noteRef.current.style.top = `${initialPosition.current.y}px`;
+                    }
+                    updateNote(id, { position: initialPosition.current });
+                    return;
+                }
             }
 
             // Normal drop - update position only if changed
