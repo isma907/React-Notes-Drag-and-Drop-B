@@ -3,52 +3,79 @@ import type { StickyNote } from "../interfaces/StickyNote";
 import { create } from "zustand";
 
 type NotesState = {
-    notes: Record<string, StickyNote>;
-    addNote: (note: StickyNote) => void;
-    removeNote: (id: string) => void;
-    updateNote: (id: string, updates: Partial<StickyNote>) => void;
+  notes: Record<string, StickyNote>;
+  noteOrder: string[];
+  addNote: (note: StickyNote) => void;
+  removeNote: (id: string) => void;
+  updateNote: (id: string, updates: Partial<StickyNote>) => void;
+  bringToFront: (id: string) => void;
 };
 
-
 export const useNotesStore = create<NotesState>()(
-    devtools(
-        persist(
-            (set) => ({
-                notes: {},
-                addNote: (note) =>
-                    set(
-                        (state) => ({
-                            notes: {
-                                ...state.notes,
-                                [note.id]: note,
-                            },
-                        }),
-                        false,
-                        "[Note] addNote",
-                    ),
-                removeNote: (id) =>
-                    set(
-                        (state) => {
-                            const { [id]: _, ...rest } = state.notes;
-                            return { notes: rest };
-                        },
-                        false,
-                        "[Note] removeNote",
-                    ),
-                updateNote: (id, updates) =>
-                    set(
-                        (state) => ({
-                            notes: {
-                                ...state.notes,
-                                [id]: { ...state.notes[id], ...updates },
-                            },
-                        }),
-                        false,
-                        "[Note] updateNote",
-                    ),
-
+  devtools(
+    persist(
+      (set) => ({
+        notes: {},
+        noteOrder: [],
+        addNote: (note) =>
+          set(
+            (state) => ({
+              notes: {
+                ...state.notes,
+                [note.id]: note,
+              },
+              noteOrder: [...state.noteOrder, note.id],
             }),
-            { name: "sticky-notes" }, // saved in localstorage to persist data
-        ),
+            false,
+            "[Note] addNote",
+          ),
+        removeNote: (id) =>
+          set(
+            (state) => {
+              const { [id]: _, ...rest } = state.notes;
+              return {
+                notes: rest,
+                noteOrder: state.noteOrder.filter((noteId) => noteId !== id),
+              };
+            },
+            false,
+            "[Note] removeNote",
+          ),
+        updateNote: (id, updates) =>
+          set(
+            (state) => ({
+              notes: {
+                ...state.notes,
+                [id]: { ...state.notes[id], ...updates },
+              },
+            }),
+            false,
+            "[Note] updateNote",
+          ),
+        bringToFront: (id) =>
+          set(
+            (state) => {
+              if (!state.notes[id]) {
+                return state;
+              }
+
+              if (state.noteOrder[state.noteOrder.length - 1] === id) {
+                return state;
+              }
+
+              return {
+                notes: state.notes,
+                noteOrder: [
+                  ...state.noteOrder.filter((noteId) => noteId !== id),
+                  id,
+                ],
+              };
+            },
+            false,
+            "[Note] bringToFront",
+          ),
+      }),
+      { name: "sticky-notes" }, // saved in localstorage to persist data
     ),
+  ),
 );

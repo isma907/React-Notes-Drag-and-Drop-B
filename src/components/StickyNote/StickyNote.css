@@ -1,70 +1,69 @@
 .sticky-note {
-    position: absolute;
+  position: absolute;
 }
 
 .sticky-note-drag-handler {
-    height: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
-    cursor: grab;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: grab;
 }
 
 .sticky-note-drag-handler:active {
-    cursor: grabbing;
+  cursor: grabbing;
 }
 
 .sticky-note_text-content {
-    appearance: none;
-    background: transparent;
-    color: var(--text);
-    padding: 1rem;
-    width: 100%;
-    height: calc(100% - 20px);
-    min-width: 100%;
-    min-height: calc(100% - 20px);
-    margin: 0;
-    border: none;
-    outline: none;
-    resize: none;
-    background: transparent;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    box-sizing: border-box;
-    font-size: 1.2rem;
-    overflow: auto;
-    display: block;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-
+  appearance: none;
+  background: transparent;
+  color: var(--text);
+  padding: 1rem;
+  width: 100%;
+  height: calc(100% - 20px);
+  min-width: 100%;
+  min-height: calc(100% - 20px);
+  margin: 0;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-sizing: border-box;
+  font-size: 1.2rem;
+  overflow: auto;
+  display: block;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .sticky-note_text-content::placeholder {
-    color: var(--text);
-    opacity: 1;
+  color: var(--text);
+  opacity: 1;
 }
 
 .sticky-note:hover .sticky-note-resize-handler {
-    opacity: 1;
+  opacity: 1;
 }
 
 .sticky-note-resize-handler {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    right: 0;
-    bottom: 0;
-    cursor: se-resize;
-    opacity: 0;
-    transition: ease-in-out 0.2s opacity;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  right: 0;
+  bottom: 0;
+  cursor: se-resize;
+  opacity: 0;
+  transition: ease-in-out 0.2s opacity;
 }
 
 .sticky-note-resize-handler::after {
-    content: '';
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0 0 15px 15px;
-    border-color: transparent transparent #ffffff transparent;
+  content: "";
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 15px 15px;
+  border-color: transparent transparent #ffffff transparent;
 }
