@@ -5,9 +5,7 @@ function App() {
 
   return (
     <>
-
       <Board />
-
     </>
   )
 }
