@@ -2,13 +2,13 @@
     position: absolute;
 }
 
-.sticky-note-drag-handle {
+.sticky-note-drag-handler {
     height: 20px;
     background-color: rgba(0, 0, 0, 0.1);
     cursor: grab;
 }
 
-.sticky-note-drag-handle:active {
+.sticky-note-drag-handler:active {
     cursor: grabbing;
 }
 
@@ -38,4 +38,16 @@
 .sticky-note_text-content::placeholder {
     color: var(--text);
     opacity: 1;
+}
+
+.sticky-note-resize-handler {
+    position: absolute;
+    width: 0;
+    height: 0;
+    right: 0;
+    bottom: 0;
+    border-style: solid;
+    border-width: 0 0 20px 20px;
+    border-color: transparent transparent #ffffff transparent;
+    cursor: se-resize;
 }

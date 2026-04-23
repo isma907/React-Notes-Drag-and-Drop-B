@@ -36,7 +36,7 @@ const StickyNote = ({ id }: { id: string }) => {
             }
             ref={noteRef}
         >
-            <div className="sticky-note-drag-handle" onPointerDown={onStartDragNote}
+            <div className="sticky-note-drag-handler" onPointerDown={onStartDragNote}
                 onPointerMove={onDragNote}
                 onPointerUp={onDropNote}></div>
             <textarea className="sticky-note_text-content" placeholder="Write your note here..."
@@ -44,6 +44,8 @@ const StickyNote = ({ id }: { id: string }) => {
                 onChange={(e) => setNoteValue(e.target.value)}
                 onBlur={handleUpdateText}
             />
+
+            <div className="sticky-note-resize-handler"></div>
         </article>
     )
 }
