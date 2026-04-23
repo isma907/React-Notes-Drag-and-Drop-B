@@ -1,3 +1,31 @@
-.sticky-note{
+.sticky-note {
     position: absolute;
+}
+
+.sticky-note .sticky-note_text-content {
+    appearance: none;
+    background: transparent;
+    color: var(--text);
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-sizing: border-box;
+    font-size: 1.2rem;
+    overflow: auto;
+    display: block;
+}
+
+.sticky-note_text-content::placeholder {
+    color: var(--text);
+    opacity: 1;
 }

@@ -22,7 +22,7 @@ const Board = () => {
         const rect = boardRef.current?.getBoundingClientRect()
         const x = e.clientX - (rect?.left || 0)
         const y = e.clientY - (rect?.top || 0);
-        addNote({ id: crypto.randomUUID(), textContent: "", position: { x, y }, backgroundColor: generateColor() })
+        addNote({ id: crypto.randomUUID(), textContent: "", position: { x, y }, backgroundColor: generateColor(), size: { width: 200, height: 200 } })
     }
 
     return (
