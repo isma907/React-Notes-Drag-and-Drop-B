@@ -5,3 +5,13 @@
     height: 100vh;
     position: relative;
 }
+
+.trash-item {
+    width: 5rem;
+    height: 5rem;
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: red;
+}
