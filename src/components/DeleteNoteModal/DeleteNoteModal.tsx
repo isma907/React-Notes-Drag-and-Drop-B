@@ -3,7 +3,9 @@ import "./DeleteNoteModal.css";
 
 const DeleteNoteModal = () => {
   const pendingDeleteNoteId = useNotesStore((s) => s.pendingDeleteNoteId);
-  const setPendingDeleteNoteId = useNotesStore((s) => s.setPendingDeleteNoteId);
+  const resetPendingDeleteNoteId = useNotesStore(
+    (s) => s.resetPendingDeleteNoteId,
+  );
   const removeNote = useNotesStore((s) => s.removeNote);
 
   if (!pendingDeleteNoteId) {
@@ -11,12 +13,11 @@ const DeleteNoteModal = () => {
   }
 
   const onCancel = () => {
-    setPendingDeleteNoteId(null);
+    resetPendingDeleteNoteId();
   };
 
   const onConfirm = () => {
     removeNote(pendingDeleteNoteId);
-    setPendingDeleteNoteId(null);
   };
 
   return (

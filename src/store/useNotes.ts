@@ -11,6 +11,7 @@ type NotesState = {
   updateNote: (id: string, updates: Partial<StickyNote>) => void;
   bringToFront: (id: string) => void;
   setPendingDeleteNoteId: (id: string | null) => void;
+  resetPendingDeleteNoteId: () => void;
 };
 
 export const useNotesStore = create<NotesState>()(
@@ -34,6 +35,7 @@ export const useNotesStore = create<NotesState>()(
           set(
             (state) => ({
               notes: state.notes.filter((note) => note.id !== id),
+              pendingDeleteNoteId: null,
             }),
             false,
             "[Note] removeNote",
@@ -71,6 +73,12 @@ export const useNotesStore = create<NotesState>()(
             { pendingDeleteNoteId: id },
             false,
             "[UI] setPendingDeleteNoteId",
+          ),
+        resetPendingDeleteNoteId: () =>
+          set(
+            { pendingDeleteNoteId: null },
+            false,
+            "[UI] resetPendingDeleteNoteId",
           ),
       }),
       {
