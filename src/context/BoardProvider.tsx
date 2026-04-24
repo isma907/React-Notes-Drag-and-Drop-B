@@ -1,4 +1,4 @@
-import { useState, type RefObject } from "react";
+import { useState, useMemo, type RefObject } from "react";
 import { BoardContext } from "./boardContext";
 
 interface BoardProviderProps {
@@ -19,15 +19,18 @@ export function BoardProvider({ children, trashRef }: BoardProviderProps) {
     setPendingDeleteNoteId(null);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      trashRef,
+      pendingDeleteNoteId,
+      openDeleteModal,
+      closeDeleteModal,
+    }),
+    [trashRef, pendingDeleteNoteId],
+  );
+
   return (
-    <BoardContext.Provider
-      value={{
-        trashRef,
-        pendingDeleteNoteId,
-        openDeleteModal,
-        closeDeleteModal,
-      }}
-    >
+    <BoardContext.Provider value={contextValue}>
       {children}
     </BoardContext.Provider>
   );

@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
+import { useShallow } from "zustand/react/shallow";
 import StickyNote from "../StickyNote/StickyNote";
 import "./Board.css";
 import { useNotesStore } from "../../store/useNotes";
@@ -12,20 +13,24 @@ const Board = () => {
   const trashRef = useRef<HTMLDivElement>(null);
   const addNote = useNotesStore((state) => state.addNote);
 
-  const noteIds = useNotesStore((s) => s.noteOrder);
+  const notes = useNotesStore(useShallow((s) => Object.keys(s.notes)));
 
   /**
     / Create a new note on doubleClicking in an empty space on the board
      */
-  const handleAddNote = (e: React.MouseEvent) => {
-    if (e.target !== e.currentTarget) return;
-    const rect = boardRef.current?.getBoundingClientRect();
-    const x = e.clientX - (rect?.left || 0);
-    const y = e.clientY - (rect?.top || 0);
+  const handleAddNote = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target !== e.currentTarget) return;
+      const rect = boardRef.current?.getBoundingClientRect();
+      const x = e.clientX - (rect?.left || 0);
+      const y = e.clientY - (rect?.top || 0);
 
-    const newStickyNote = createStickyNote({ x, y });
-    addNote(newStickyNote);
-  };
+      const { lastZIndex } = useNotesStore.getState();
+      const newStickyNote = createStickyNote({ x, y }, lastZIndex + 1);
+      addNote(newStickyNote);
+    },
+    [addNote],
+  );
 
   return (
     <BoardProvider trashRef={trashRef}>
@@ -34,7 +39,7 @@ const Board = () => {
           <FaRegTrashCan />
         </div>
 
-        {noteIds.map((id) => (
+        {notes.map((id) => (
           <StickyNote key={id} id={id} />
         ))}
       </section>

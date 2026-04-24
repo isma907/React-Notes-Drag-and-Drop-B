@@ -4,6 +4,7 @@ export interface StickyNote {
   backgroundColor: string;
   position: StickyNotePosition;
   size?: StickyNoteSize;
+  zIndex: number;
 }
 
 export interface StickyNotePosition {

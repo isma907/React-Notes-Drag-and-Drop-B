@@ -7,7 +7,6 @@ export function useDrag(
   noteRef: React.RefObject<HTMLDivElement | null>,
   trashRef: React.RefObject<HTMLDivElement | null>,
 ) {
-  const note = useNotesStore((s) => s.notes[id]);
   const updateNote = useNotesStore((s) => s.updateNote);
   const bringToFront = useNotesStore((s) => s.bringToFront);
   const { openDeleteModal } = useBoardContext();
@@ -19,6 +18,7 @@ export function useDrag(
 
   const onStartDragNote = useCallback(
     (e: React.PointerEvent) => {
+      const note = useNotesStore.getState().notes[id];
       if (!note) return;
 
       bringToFront(id);
@@ -33,7 +33,7 @@ export function useDrag(
 
       e.currentTarget.setPointerCapture(e.pointerId);
     },
-    [bringToFront, id, note],
+    [bringToFront, id],
   );
 
   const onDragNote = useCallback(
@@ -52,6 +52,8 @@ export function useDrag(
   const onDropNote = useCallback(() => {
     if (!isDragging.current) return;
     isDragging.current = false;
+
+    const note = useNotesStore.getState().notes[id];
     if (!note) return;
     if (trashRef.current && noteRef.current) {
       const trashRect = trashRef.current.getBoundingClientRect();
@@ -85,7 +87,7 @@ export function useDrag(
         }
       }
     }
-  }, [id, note, noteRef, openDeleteModal, trashRef, updateNote]);
+  }, [id, noteRef, openDeleteModal, trashRef, updateNote]);
 
   return {
     onStartDragNote,

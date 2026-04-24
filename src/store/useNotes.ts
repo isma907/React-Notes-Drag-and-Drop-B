@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 type NotesState = {
   notes: Record<string, StickyNote>;
-  noteOrder: string[];
+  lastZIndex: number;
   addNote: (note: StickyNote) => void;
   removeNote: (id: string) => void;
   updateNote: (id: string, updates: Partial<StickyNote>) => void;
@@ -16,7 +16,7 @@ export const useNotesStore = create<NotesState>()(
     persist(
       (set) => ({
         notes: {},
-        noteOrder: [],
+        lastZIndex: 0,
         addNote: (note) =>
           set(
             (state) => ({
@@ -24,7 +24,7 @@ export const useNotesStore = create<NotesState>()(
                 ...state.notes,
                 [note.id]: note,
               },
-              noteOrder: [...state.noteOrder, note.id],
+              lastZIndex: Math.max(state.lastZIndex, note.zIndex),
             }),
             false,
             "[Note] addNote",
@@ -37,7 +37,6 @@ export const useNotesStore = create<NotesState>()(
               );
               return {
                 notes,
-                noteOrder: state.noteOrder.filter((noteId) => noteId !== id),
               };
             },
             false,
@@ -60,17 +59,13 @@ export const useNotesStore = create<NotesState>()(
               if (!state.notes[id]) {
                 return state;
               }
-
-              if (state.noteOrder[state.noteOrder.length - 1] === id) {
-                return state;
-              }
-
+              const newZIndex = state.lastZIndex + 1;
               return {
-                notes: state.notes,
-                noteOrder: [
-                  ...state.noteOrder.filter((noteId) => noteId !== id),
-                  id,
-                ],
+                notes: {
+                  ...state.notes,
+                  [id]: { ...state.notes[id], zIndex: newZIndex },
+                },
+                lastZIndex: newZIndex,
               };
             },
             false,

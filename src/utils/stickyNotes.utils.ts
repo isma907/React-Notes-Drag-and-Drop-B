@@ -12,12 +12,16 @@ export const generateColor = (): string => {
   return `#${color}`;
 };
 
-export const createStickyNote = (position: StickyNotePosition): StickyNote => {
+export const createStickyNote = (
+  position: StickyNotePosition,
+  zIndex: number,
+): StickyNote => {
   return {
     id: crypto.randomUUID(),
     textContent: "",
     position,
     backgroundColor: generateColor(),
+    zIndex,
     size: {
       width: STICKY_NOTE_MIN_WIDTH,
       height: STICKY_NOTE_MIN_HEIGHT,

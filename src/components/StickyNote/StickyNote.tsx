@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useNotesStore } from "../../store/useNotes";
 import "./StickyNote.css";
 import { useDrag } from "../../hooks/userDrag";
@@ -7,7 +7,6 @@ import { useResize } from "../../hooks/useResize";
 
 const StickyNote = ({ id }: { id: string }) => {
   const note = useNotesStore((s) => s.notes[id]);
-  const noteIndex = useNotesStore((s) => s.noteOrder.indexOf(id));
   const noteRef = useRef<HTMLDivElement>(null);
   const { trashRef } = useBoardContext();
 
@@ -25,12 +24,12 @@ const StickyNote = ({ id }: { id: string }) => {
   const [noteValue, setNoteValue] = useState(note?.textContent ?? "");
 
   const handleUpdateText = useCallback(() => {
-    const current = note?.textContent ?? "";
+    const current = useNotesStore.getState().notes[id]?.textContent ?? "";
     //Update store only if there is a change in the content
     if (noteValue !== current) {
       updateNote(id, { textContent: noteValue });
     }
-  }, [id, note?.textContent, noteValue, updateNote]);
+  }, [id, noteValue, updateNote]);
 
   if (!note) {
     return null;
@@ -45,7 +44,7 @@ const StickyNote = ({ id }: { id: string }) => {
         left: note.position.x,
         top: note.position.y,
         backgroundColor: note.backgroundColor,
-        zIndex: noteIndex + 1,
+        zIndex: note.zIndex,
       }}
       ref={noteRef}
     >
@@ -73,4 +72,4 @@ const StickyNote = ({ id }: { id: string }) => {
   );
 };
 
-export default StickyNote;
+export default React.memo(StickyNote);

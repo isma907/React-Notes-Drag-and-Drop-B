@@ -9,7 +9,6 @@ export function useResize(
   id: string,
   noteRef: React.RefObject<HTMLDivElement | null>,
 ) {
-  const note = useNotesStore((s) => s.notes[id]);
   const updateNote = useNotesStore((s) => s.updateNote);
   const bringToFront = useNotesStore((s) => s.bringToFront);
 
@@ -18,6 +17,7 @@ export function useResize(
 
   const onStartResizeNote = useCallback(
     (e: React.PointerEvent) => {
+      const note = useNotesStore.getState().notes[id];
       if (!note) return;
       bringToFront(id);
       resizing.current = true;
@@ -31,7 +31,7 @@ export function useResize(
       e.currentTarget.setPointerCapture(e.pointerId);
       e.stopPropagation();
     },
-    [bringToFront, id, note],
+    [bringToFront, id],
   );
 
   const onResizeNote = useCallback(
@@ -60,6 +60,7 @@ export function useResize(
 
     const rect = noteRef.current.getBoundingClientRect();
 
+    const note = useNotesStore.getState().notes[id];
     if (!note) return;
     const width = Math.round(rect.width);
     const height = Math.round(rect.height);
@@ -68,7 +69,7 @@ export function useResize(
         size: { width, height },
       });
     }
-  }, [id, note, updateNote, noteRef]);
+  }, [id, updateNote, noteRef]);
 
   return { onStartResizeNote, onResizeNote, onResizeNoteEnd };
 }
