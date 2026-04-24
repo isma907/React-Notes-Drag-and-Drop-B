@@ -1,6 +1,5 @@
 import { useRef, useCallback } from "react";
 import { useNotesStore } from "../store/useNotes";
-import { useBoardContext } from "../context/useBoardContext";
 
 export function useDrag(
   id: string,
@@ -9,7 +8,7 @@ export function useDrag(
 ) {
   const updateNote = useNotesStore((s) => s.updateNote);
   const bringToFront = useNotesStore((s) => s.bringToFront);
-  const { openDeleteModal } = useBoardContext();
+  const setPendingDeleteNoteId = useNotesStore((s) => s.setPendingDeleteNoteId);
 
   const isDragging = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
@@ -70,7 +69,7 @@ export function useDrag(
         noteRef.current.style.left = `${initialPosition.current.x}px`;
         noteRef.current.style.top = `${initialPosition.current.y}px`;
         updateNote(id, { position: initialPosition.current });
-        openDeleteModal(note.id);
+        setPendingDeleteNoteId(note.id);
         return;
       }
 
@@ -87,7 +86,7 @@ export function useDrag(
         }
       }
     }
-  }, [id, noteRef, openDeleteModal, trashRef, updateNote]);
+  }, [id, noteRef, trashRef, updateNote]);
 
   return {
     onStartDragNote,

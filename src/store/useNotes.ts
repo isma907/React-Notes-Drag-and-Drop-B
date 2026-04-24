@@ -4,18 +4,22 @@ import { create } from "zustand";
 
 type NotesState = {
   notes: Record<string, StickyNote>;
+  pendingDeleteNoteId: string | null;
   lastZIndex: number;
   addNote: (note: StickyNote) => void;
   removeNote: (id: string) => void;
   updateNote: (id: string, updates: Partial<StickyNote>) => void;
   bringToFront: (id: string) => void;
+  setPendingDeleteNoteId: (id: string | null) => void;
 };
+
 
 export const useNotesStore = create<NotesState>()(
   devtools(
     persist(
       (set) => ({
         notes: {},
+        pendingDeleteNoteId: null,
         lastZIndex: 0,
         addNote: (note) =>
           set(
@@ -71,8 +75,17 @@ export const useNotesStore = create<NotesState>()(
             false,
             "[Note] bringToFront",
           ),
+        setPendingDeleteNoteId: (id) =>
+          set({ pendingDeleteNoteId: id }, false, "[UI] setPendingDeleteNoteId"),
       }),
-      { name: "sticky-notes" }, // saved in localstorage to persist data
+      {
+        name: "sticky-notes",
+        partialize: (state) => ({
+          notes: state.notes,
+          lastZIndex: state.lastZIndex,
+        }),
+      },
     ),
   ),
 );
+

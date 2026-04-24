@@ -1,23 +1,25 @@
-import { useBoardContext } from "../../context/useBoardContext";
 import { useNotesStore } from "../../store/useNotes";
 import "./DeleteNoteModal.css";
 
 const DeleteNoteModal = () => {
-  const { pendingDeleteNoteId, closeDeleteModal } = useBoardContext();
+  const pendingDeleteNoteId = useNotesStore((s) => s.pendingDeleteNoteId);
+  const setPendingDeleteNoteId = useNotesStore((s) => s.setPendingDeleteNoteId);
   const removeNote = useNotesStore((s) => s.removeNote);
+
 
   if (!pendingDeleteNoteId) {
     return null;
   }
 
   const onCancel = () => {
-    closeDeleteModal();
+    setPendingDeleteNoteId(null);
   };
 
   const onConfirm = () => {
     removeNote(pendingDeleteNoteId);
-    closeDeleteModal();
+    setPendingDeleteNoteId(null);
   };
+
 
   return (
     <div className="delete-note-modal-backdrop" role="dialog" aria-modal="true">
