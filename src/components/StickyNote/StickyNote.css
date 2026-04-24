@@ -1,5 +1,6 @@
 .sticky-note {
   position: absolute;
+  box-shadow: var(--shadow);
 }
 
 .sticky-note-drag-handler {
