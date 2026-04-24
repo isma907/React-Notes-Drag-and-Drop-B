@@ -5,6 +5,11 @@ import {
   STICKY_NOTE_MIN_WIDTH,
 } from "../constants/stickyNotes.constants";
 
+/**
+ * Custom hook to handle the resizing of a Note.
+ * @param id - The unique ID of the Note.
+ * @param noteRef - Reference to the Note DOM element.
+ */
 export function useResize(
   id: string,
   noteRef: React.RefObject<HTMLDivElement | null>,
@@ -13,7 +18,7 @@ export function useResize(
   const bringToFront = useNotesStore((s) => s.bringToFront);
 
   const resizing = useRef(false);
-  const start = useRef({ x: 0, y: 0, w: 0, h: 0 });
+  const initialPosition = useRef({ x: 0, y: 0, w: 0, h: 0 }); // Initial data when starting to resize
 
   const onStartResizeNote = useCallback(
     (e: React.PointerEvent) => {
@@ -25,19 +30,22 @@ export function useResize(
 
       bringToFront(id);
       resizing.current = true;
-      start.current = {
+      // Store the mouse position and the current size of the Note
+      initialPosition.current = {
         x: e.clientX,
         y: e.clientY,
         w: note?.size?.width ?? STICKY_NOTE_MIN_WIDTH,
         h: note?.size?.height ?? STICKY_NOTE_MIN_HEIGHT,
       };
 
-      e.currentTarget.setPointerCapture(e.pointerId);
       e.stopPropagation();
     },
     [bringToFront, id],
   );
 
+  /**
+   * Executed while the user is resizing the Note.
+   */
   const onResizeNote = useCallback(
     (e: React.PointerEvent) => {
       if (!resizing.current || !noteRef.current) return;
@@ -45,31 +53,37 @@ export function useResize(
       //Check with minHeight and minWidth to avoid resizing too small
       const width = Math.max(
         STICKY_NOTE_MIN_WIDTH,
-        start.current.w + (e.clientX - start.current.x),
+        initialPosition.current.w + (e.clientX - initialPosition.current.x),
       );
       const height = Math.max(
         STICKY_NOTE_MIN_HEIGHT,
-        start.current.h + (e.clientY - start.current.y),
+        initialPosition.current.h + (e.clientY - initialPosition.current.y),
       );
 
+      // Update the DOM directly for better performance
       noteRef.current.style.width = `${width}px`;
       noteRef.current.style.height = `${height}px`;
     },
     [noteRef],
   );
 
+  /**
+   * Executed when user stops resizing the Note (drop resize handler)
+   */
   const onResizeNoteEnd = useCallback(() => {
     if (!resizing.current || !noteRef.current) return;
     resizing.current = false;
 
+    // Get the final size of the DOM element
     const rect = noteRef.current.getBoundingClientRect();
-
     const note = useNotesStore.getState().notes.find((note) => note.id === id);
 
     if (!note) return;
 
     const width = Math.round(rect.width);
     const height = Math.round(rect.height);
+
+    // update only if size has changed
     if (note?.size?.width !== width || note?.size?.height !== height) {
       updateNote(id, {
         size: { width, height },

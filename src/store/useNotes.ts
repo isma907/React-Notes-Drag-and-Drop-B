@@ -24,6 +24,7 @@ export const useNotesStore = create<NotesState>()(
           set(
             (state) => ({
               notes: [...state.notes, note],
+              // Ensure to update lastZIndex on adding new Note
               lastZIndex: Math.max(state.lastZIndex, note.zIndex),
             }),
             false,
@@ -47,6 +48,7 @@ export const useNotesStore = create<NotesState>()(
             false,
             "[Note] updateNote",
           ),
+        // Increments the z-index of the Note to move it to the front
         bringToFront: (id) =>
           set(
             (state) => {
@@ -63,6 +65,7 @@ export const useNotesStore = create<NotesState>()(
             false,
             "[Note] bringToFront",
           ),
+        // Control state for delete confirmation modal Note id
         setPendingDeleteNoteId: (id) =>
           set(
             { pendingDeleteNoteId: id },
@@ -71,7 +74,8 @@ export const useNotesStore = create<NotesState>()(
           ),
       }),
       {
-        name: "sticky-notes",
+        name: "sticky-notes", // Key name in localStorage
+        // partialize to avoid saving temporary states on localStorage like pendingDeleteNoteId
         partialize: (state) => ({
           notes: state.notes,
           lastZIndex: state.lastZIndex,
