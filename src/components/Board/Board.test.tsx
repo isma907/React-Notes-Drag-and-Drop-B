@@ -8,7 +8,7 @@ describe("Board integration", () => {
   it("loads the app with no notes", () => {
     render(<Board />);
 
-    expect(useNotesStore.getState().noteOrder).toHaveLength(0);
+    expect(Object.keys(useNotesStore.getState().notes)).toHaveLength(0);
     expect(
       screen.queryByPlaceholderText("Write your note here..."),
     ).not.toBeInTheDocument();
@@ -35,13 +35,13 @@ describe("Board integration", () => {
 
     fireEvent.doubleClick(board!, { clientX: 110, clientY: 220 });
 
-    const { noteOrder, notes } = useNotesStore.getState();
-    expect(noteOrder).toHaveLength(1);
+    const { notes } = useNotesStore.getState();
+    expect(Object.keys(notes).length).toBe(1);
     expect(
       screen.getByPlaceholderText("Write your note here..."),
     ).toBeVisible();
 
-    const note = notes[noteOrder[0]];
+    const note = notes[Object.keys(notes)[0]];
     expect(note.position).toEqual({ x: 100, y: 200 });
   });
 });
