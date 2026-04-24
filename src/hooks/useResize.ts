@@ -17,8 +17,12 @@ export function useResize(
 
   const onStartResizeNote = useCallback(
     (e: React.PointerEvent) => {
-      const note = useNotesStore.getState().notes[id];
+      const note = useNotesStore
+        .getState()
+        .notes.find((note) => note.id === id);
+
       if (!note) return;
+
       bringToFront(id);
       resizing.current = true;
       start.current = {
@@ -60,8 +64,10 @@ export function useResize(
 
     const rect = noteRef.current.getBoundingClientRect();
 
-    const note = useNotesStore.getState().notes[id];
+    const note = useNotesStore.getState().notes.find((note) => note.id === id);
+
     if (!note) return;
+
     const width = Math.round(rect.width);
     const height = Math.round(rect.height);
     if (note?.size?.width !== width || note?.size?.height !== height) {

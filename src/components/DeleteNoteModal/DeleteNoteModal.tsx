@@ -6,7 +6,6 @@ const DeleteNoteModal = () => {
   const setPendingDeleteNoteId = useNotesStore((s) => s.setPendingDeleteNoteId);
   const removeNote = useNotesStore((s) => s.removeNote);
 
-
   if (!pendingDeleteNoteId) {
     return null;
   }
@@ -19,7 +18,6 @@ const DeleteNoteModal = () => {
     removeNote(pendingDeleteNoteId);
     setPendingDeleteNoteId(null);
   };
-
 
   return (
     <div className="delete-note-modal-backdrop" role="dialog" aria-modal="true">

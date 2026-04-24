@@ -6,7 +6,7 @@ import { useResize } from "../../hooks/useResize";
 import { useBoardContext } from "../../context/boardContext";
 
 const StickyNote = ({ id }: { id: string }) => {
-  const note = useNotesStore((s) => s.notes[id]);
+  const note = useNotesStore((s) => s.notes.find((note) => note.id === id));
   const noteRef = useRef<HTMLDivElement>(null);
   const { trashRef } = useBoardContext();
 
@@ -24,7 +24,10 @@ const StickyNote = ({ id }: { id: string }) => {
   const [noteValue, setNoteValue] = useState(note?.textContent ?? "");
 
   const handleUpdateText = useCallback(() => {
-    const current = useNotesStore.getState().notes[id]?.textContent ?? "";
+    const current =
+      useNotesStore.getState().notes.find((note) => note.id === id)
+        ?.textContent ?? "";
+
     //Update store only if there is a change in the content
     if (noteValue !== current) {
       updateNote(id, { textContent: noteValue });

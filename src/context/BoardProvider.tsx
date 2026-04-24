@@ -20,4 +20,3 @@ export function BoardProvider({ children, trashRef }: BoardProviderProps) {
     </BoardContext.Provider>
   );
 }
-

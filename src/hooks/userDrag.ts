@@ -17,7 +17,10 @@ export function useDrag(
 
   const onStartDragNote = useCallback(
     (e: React.PointerEvent) => {
-      const note = useNotesStore.getState().notes[id];
+      const note = useNotesStore
+        .getState()
+        .notes.find((note) => note.id === id);
+
       if (!note) return;
 
       bringToFront(id);
@@ -52,8 +55,10 @@ export function useDrag(
     if (!isDragging.current) return;
     isDragging.current = false;
 
-    const note = useNotesStore.getState().notes[id];
+    const note = useNotesStore.getState().notes.find((note) => note.id === id);
+
     if (!note) return;
+
     if (trashRef.current && noteRef.current) {
       const trashRect = trashRef.current.getBoundingClientRect();
       const noteRect = noteRef.current.getBoundingClientRect();
@@ -86,7 +91,7 @@ export function useDrag(
         }
       }
     }
-  }, [id, noteRef, trashRef, updateNote]);
+  }, [id, noteRef, trashRef, setPendingDeleteNoteId, updateNote]);
 
   return {
     onStartDragNote,

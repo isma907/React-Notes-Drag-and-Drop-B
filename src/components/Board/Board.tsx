@@ -13,7 +13,9 @@ const Board = () => {
   const trashRef = useRef<HTMLDivElement>(null);
   const addNote = useNotesStore((state) => state.addNote);
 
-  const notes = useNotesStore(useShallow((s) => Object.keys(s.notes)));
+  const notes = useNotesStore(
+    useShallow((s) => s.notes.map((note) => note.id)),
+  );
 
   /**
     / Create a new note on doubleClicking in an empty space on the board

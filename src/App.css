@@ -1,8 +1,8 @@
 .info-text {
-    text-align: center;
-    color: var(--info-text-color);
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
+  text-align: center;
+  color: var(--info-text-color);
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
 }

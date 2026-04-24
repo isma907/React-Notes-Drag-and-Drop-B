@@ -3,7 +3,7 @@ import type { StickyNote } from "../interfaces/StickyNote";
 import { create } from "zustand";
 
 type NotesState = {
-  notes: Record<string, StickyNote>;
+  notes: StickyNote[];
   pendingDeleteNoteId: string | null;
   lastZIndex: number;
   addNote: (note: StickyNote) => void;
@@ -13,21 +13,17 @@ type NotesState = {
   setPendingDeleteNoteId: (id: string | null) => void;
 };
 
-
 export const useNotesStore = create<NotesState>()(
   devtools(
     persist(
       (set) => ({
-        notes: {},
+        notes: [],
         pendingDeleteNoteId: null,
         lastZIndex: 0,
         addNote: (note) =>
           set(
             (state) => ({
-              notes: {
-                ...state.notes,
-                [note.id]: note,
-              },
+              notes: [...state.notes, note],
               lastZIndex: Math.max(state.lastZIndex, note.zIndex),
             }),
             false,
@@ -35,24 +31,18 @@ export const useNotesStore = create<NotesState>()(
           ),
         removeNote: (id) =>
           set(
-            (state) => {
-              const notes = Object.fromEntries(
-                Object.entries(state.notes).filter(([key]) => key !== id),
-              );
-              return {
-                notes,
-              };
-            },
+            (state) => ({
+              notes: state.notes.filter((note) => note.id !== id),
+            }),
             false,
             "[Note] removeNote",
           ),
         updateNote: (id, updates) =>
           set(
             (state) => ({
-              notes: {
-                ...state.notes,
-                [id]: { ...state.notes[id], ...updates },
-              },
+              notes: state.notes.map((note) =>
+                note.id === id ? { ...note, ...updates } : note,
+              ),
             }),
             false,
             "[Note] updateNote",
@@ -60,15 +50,13 @@ export const useNotesStore = create<NotesState>()(
         bringToFront: (id) =>
           set(
             (state) => {
-              if (!state.notes[id]) {
-                return state;
-              }
+              const note = state.notes.find((note) => note.id === id);
+              if (!note) return state;
               const newZIndex = state.lastZIndex + 1;
               return {
-                notes: {
-                  ...state.notes,
-                  [id]: { ...state.notes[id], zIndex: newZIndex },
-                },
+                notes: state.notes.map((note) =>
+                  note.id === id ? { ...note, zIndex: newZIndex } : note,
+                ),
                 lastZIndex: newZIndex,
               };
             },
@@ -76,7 +64,11 @@ export const useNotesStore = create<NotesState>()(
             "[Note] bringToFront",
           ),
         setPendingDeleteNoteId: (id) =>
-          set({ pendingDeleteNoteId: id }, false, "[UI] setPendingDeleteNoteId"),
+          set(
+            { pendingDeleteNoteId: id },
+            false,
+            "[UI] setPendingDeleteNoteId",
+          ),
       }),
       {
         name: "sticky-notes",
@@ -88,4 +80,3 @@ export const useNotesStore = create<NotesState>()(
     ),
   ),
 );
-
