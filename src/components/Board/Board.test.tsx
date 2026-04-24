@@ -36,12 +36,12 @@ describe("Board integration", () => {
     fireEvent.doubleClick(board!, { clientX: 110, clientY: 220 });
 
     const { notes } = useNotesStore.getState();
-    expect(Object.keys(notes).length).toBe(1);
+    expect(notes.length).toBe(1);
     expect(
       screen.getByPlaceholderText("Write your note here..."),
     ).toBeVisible();
 
-    const note = notes[Object.keys(notes)[0]];
+    const note = notes[0];
     expect(note.position).toEqual({ x: 100, y: 200 });
   });
 });
