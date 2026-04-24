@@ -17,6 +17,7 @@
   --note-drag-handler-height: 1.25rem;
 
   --trash-bg: #ff2225;
+  --basic-transition:ease-in-out 0.2s opacity;
 
   --bg: #16171d;
   --shadow:

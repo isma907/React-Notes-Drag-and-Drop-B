@@ -6,6 +6,24 @@
   height: var(--note-drag-handler-height);
   background-color: var(--note-drag-handler-bg);
   cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: var(--basic-transition);
+}
+
+.sticky-note-drag-handler:hover{
+  opacity: 1;
+}
+
+.sticky-note:hover .sticky-note-drag-handler{
+  opacity: 1;
+}
+
+.sticky-note-drag-handler-icon{
+  transform: rotate(90deg);
+  display: flex;
 }
 
 .sticky-note-drag-handler:active {
@@ -53,7 +71,7 @@
   bottom: 0;
   cursor: se-resize;
   opacity: 0;
-  transition: ease-in-out 0.2s opacity;
+  transition: var(--basic-transition);
 }
 
 .sticky-note-resize-handler::after {

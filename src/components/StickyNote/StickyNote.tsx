@@ -4,6 +4,7 @@ import "./StickyNote.css";
 import { useDrag } from "../../hooks/userDrag";
 import { useResize } from "../../hooks/useResize";
 import { useBoardContext } from "../../context/boardContext";
+import { RiDraggable } from "react-icons/ri";
 
 const StickyNote = ({ id }: { id: string }) => {
   const note = useNotesStore((s) => s.notes.find((note) => note.id === id));
@@ -56,7 +57,11 @@ const StickyNote = ({ id }: { id: string }) => {
         onPointerDown={onStartDragNote}
         onPointerMove={onDragNote}
         onPointerUp={onDropNote}
-      ></div>
+      >
+        <span className="sticky-note-drag-handler-icon">
+          <RiDraggable />
+        </span>
+      </div>
       <textarea
         className="sticky-note_text-content"
         placeholder="Write your note here..."
