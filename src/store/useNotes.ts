@@ -4,14 +4,16 @@ import { create } from "zustand";
 
 type NotesState = {
   notes: StickyNote[];
-  pendingDeleteNoteId: string | null;
   lastZIndex: number;
   addNote: (note: StickyNote) => void;
   removeNote: (id: string) => void;
   updateNote: (id: string, updates: Partial<StickyNote>) => void;
   bringToFront: (id: string) => void;
-  setPendingDeleteNoteId: (id: string | null) => void;
-  resetPendingDeleteNoteId: () => void;
+
+  deleteNoteId: string | null;
+  isDeleteModalOpen: boolean;
+  showDeleteNoteModal: (id: string) => void;
+  hideDeleteNoteModal: () => void;
 };
 
 export const useNotesStore = create<NotesState>()(
@@ -19,7 +21,7 @@ export const useNotesStore = create<NotesState>()(
     persist(
       (set) => ({
         notes: [],
-        pendingDeleteNoteId: null,
+        deleteNoteId: null,
         lastZIndex: 0,
         addNote: (note) =>
           set(
@@ -35,7 +37,7 @@ export const useNotesStore = create<NotesState>()(
           set(
             (state) => ({
               notes: state.notes.filter((note) => note.id !== id),
-              pendingDeleteNoteId: null,
+              deleteNoteId: null,
             }),
             false,
             "[Note] removeNote",
@@ -68,17 +70,18 @@ export const useNotesStore = create<NotesState>()(
             "[Note] bringToFront",
           ),
         // Control state for delete confirmation modal Note id
-        setPendingDeleteNoteId: (id) =>
+        isDeleteModalOpen: false,
+        showDeleteNoteModal: (id) =>
           set(
-            { pendingDeleteNoteId: id },
+            { isDeleteModalOpen: true, deleteNoteId: id },
             false,
-            "[UI] setPendingDeleteNoteId",
+            "[UI] showDeleteNoteModal",
           ),
-        resetPendingDeleteNoteId: () =>
+        hideDeleteNoteModal: () =>
           set(
-            { pendingDeleteNoteId: null },
+            { isDeleteModalOpen: false, deleteNoteId: null },
             false,
-            "[UI] resetPendingDeleteNoteId",
+            "[UI] hideDeleteNoteModal",
           ),
       }),
       {

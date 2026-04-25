@@ -2,28 +2,28 @@ import { useNotesStore } from "../../store/useNotes";
 import "./DeleteNoteModal.css";
 
 const DeleteNoteModal = () => {
-  const pendingDeleteNoteId = useNotesStore((s) => s.pendingDeleteNoteId);
-  const resetPendingDeleteNoteId = useNotesStore(
-    (s) => s.resetPendingDeleteNoteId,
-  );
+  const isDeleteModalOpen = useNotesStore((s) => s.isDeleteModalOpen);
+  const deleteNoteId = useNotesStore((s) => s.deleteNoteId);
+  const hideDeleteNoteModal = useNotesStore((s) => s.hideDeleteNoteModal);
   const removeNote = useNotesStore((s) => s.removeNote);
 
-  if (!pendingDeleteNoteId) {
+  if (!isDeleteModalOpen || !deleteNoteId) {
     return null;
   }
 
   const onCancel = () => {
-    resetPendingDeleteNoteId();
+    hideDeleteNoteModal();
   };
 
   const onConfirm = () => {
-    removeNote(pendingDeleteNoteId);
+    removeNote(deleteNoteId);
+    hideDeleteNoteModal();
   };
 
   return (
     <div className="delete-note-modal-backdrop" role="dialog" aria-modal="true">
       <div className="delete-note-modal">
-        <p>Delete this StickyNote?</p>
+        <h3>Delete this StickyNote?</h3>
         <div className="delete-note-modal-actions">
           <button type="button" onClick={onCancel}>
             Cancel

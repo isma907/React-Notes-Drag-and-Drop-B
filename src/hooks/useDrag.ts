@@ -14,7 +14,7 @@ export function useDrag(
 ) {
   const updateNote = useNotesStore((s) => s.updateNote);
   const bringToFront = useNotesStore((s) => s.bringToFront);
-  const setPendingDeleteNoteId = useNotesStore((s) => s.setPendingDeleteNoteId);
+  const showDeleteNoteModal = useNotesStore((s) => s.showDeleteNoteModal);
 
   const isDragging = useRef(false);
 
@@ -95,7 +95,7 @@ export function useDrag(
       if (isOverTrash) {
         noteRef.current.style.left = `${initialPosition.current.x}px`;
         noteRef.current.style.top = `${initialPosition.current.y}px`;
-        setPendingDeleteNoteId(note.id);
+        showDeleteNoteModal(note.id);
         return;
       }
 
@@ -112,7 +112,7 @@ export function useDrag(
         }
       }
     }
-  }, [id, noteRef, trashRef, setPendingDeleteNoteId, updateNote]);
+  }, [id, noteRef, trashRef, showDeleteNoteModal, updateNote]);
 
   return {
     onStartDragNote,
