@@ -9,7 +9,7 @@ import "./StickyNote.css";
 const StickyNote = ({ id }: { id: string }) => {
   const note = useNotesStore((s) => s.notes.find((note) => note.id === id));
   const noteRef = useRef<HTMLDivElement>(null);
-  const { trashRef } = use(BoardContext);
+  const { trashRef } = use(BoardContext)!;
 
   const { onStartDragNote, onDragNote, onDropNote } = useDrag(
     id,
