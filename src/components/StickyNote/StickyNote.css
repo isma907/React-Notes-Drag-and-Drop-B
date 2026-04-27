@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
+  opacity: 0.5;
   transition: var(--basic-transition);
 }
 
@@ -70,7 +70,7 @@
   right: 0;
   bottom: 0;
   cursor: se-resize;
-  opacity: 0;
+  opacity: 0.5;
   transition: var(--basic-transition);
 }
 
