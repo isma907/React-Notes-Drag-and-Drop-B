@@ -22,6 +22,7 @@ export function useResize(
 
   const onStartResizeNote = useCallback(
     (e: React.PointerEvent) => {
+      if (e.button !== 0) return; // pressed left click only
       const note = useNotesStore
         .getState()
         .notes.find((note) => note.id === id);
