@@ -27,7 +27,7 @@ export function useDrag(
   const noteSize = useRef({ width: 0, height: 0 });
   const boardSize = useRef({ width: 0, height: 0 });
 
-  const isOverTrash = () => {
+  const isOverTrash = useCallback(() => {
     if (!trashRef.current || !noteRef.current) return false;
 
     const trashRect = trashRef.current.getBoundingClientRect();
@@ -39,17 +39,17 @@ export function useDrag(
       noteRect.top < trashRect.bottom &&
       noteRect.bottom > trashRect.top
     );
-  };
+  }, [trashRef, noteRef]);
 
-  const addTrashClasses = () => {
+  const addTrashClasses = useCallback(() => {
     trashRef.current?.classList.add("trash-active");
     noteRef.current?.classList.add("note-over-trash");
-  };
+  }, [trashRef, noteRef]);
 
-  const removeTrashClasses = () => {
+  const removeTrashClasses = useCallback(() => {
     trashRef.current?.classList.remove("trash-active");
     noteRef.current?.classList.remove("note-over-trash");
-  };
+  }, [trashRef, noteRef]);
 
   /**
    * Executed on pressing the drag handler (Start draging the Note).
@@ -133,7 +133,14 @@ export function useDrag(
         }
       }
     },
-    [noteRef, trashRef, boardRef],
+    [
+      noteRef,
+      trashRef,
+      boardRef,
+      isOverTrash,
+      addTrashClasses,
+      removeTrashClasses,
+    ],
   );
 
   /**
@@ -167,7 +174,7 @@ export function useDrag(
         });
       }
     },
-    [id, removeNote, updateNote],
+    [id, removeNote, updateNote, isOverTrash, removeTrashClasses],
   );
 
   return {

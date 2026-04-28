@@ -1,4 +1,4 @@
-import React, { use, useCallback, useEffect, useRef, useState } from "react";
+import React, { use, useCallback, useRef, useState } from "react";
 import { useNotesStore } from "../../store/useNotes";
 import { useDrag } from "../../hooks/useDrag";
 import { useResize } from "../../hooks/useResize";
@@ -25,13 +25,16 @@ const StickyNote = ({ id }: { id: string }) => {
   const updateNote = useNotesStore((s) => s.updateNote);
   const [noteValue, setNoteValue] = useState(note?.textContent ?? "");
 
-  // Sync state if textContent changes externally
-  useEffect(() => {
-    if (note?.textContent !== undefined && note.textContent !== noteValue) {
-      setNoteValue(note.textContent);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [note?.textContent]);
+  const handleFocus = useCallback(() => {
+    setNoteValue(note?.textContent ?? "");
+  }, [note]);
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setNoteValue(e.target.value);
+    },
+    [],
+  );
 
   const handleUpdateText = useCallback(() => {
     const current =
@@ -44,9 +47,7 @@ const StickyNote = ({ id }: { id: string }) => {
     }
   }, [id, noteValue, updateNote]);
 
-  if (!note) {
-    return null;
-  }
+  if (!note) return null;
 
   return (
     <article
@@ -74,7 +75,8 @@ const StickyNote = ({ id }: { id: string }) => {
         className="sticky-note_text-content"
         placeholder="Write your note here..."
         value={noteValue}
-        onChange={(e) => setNoteValue(e.target.value)}
+        onFocus={handleFocus}
+        onChange={handleChange}
         onBlur={handleUpdateText}
       />
 
@@ -83,7 +85,7 @@ const StickyNote = ({ id }: { id: string }) => {
         onPointerDown={onStartResizeNote}
         onPointerMove={onResizeNote}
         onPointerUp={onResizeNoteEnd}
-      ></div>
+      />
     </article>
   );
 };
