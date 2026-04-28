@@ -15,9 +15,10 @@
   --note-resize-handler-bg: #ffffff;
   --note-drag-handler-bg: rgba(0, 0, 0, 0.5);
   --note-drag-handler-height: 1.25rem;
+  --note-delete-bg: #666;
 
   --trash-bg: #ff2225;
-  --basic-transition: ease-in-out 0.2s opacity;
+  --basic-transition: all 0.2s ease-in-out;
 
   --bg: #16171d;
   --toobar-bg: #111216;

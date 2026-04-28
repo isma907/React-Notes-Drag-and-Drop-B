@@ -22,10 +22,9 @@ type NotesState = {
   updateNote: (id: string, updates: Partial<StickyNote>) => void;
   bringToFront: (id: string) => void;
 
-  deleteNoteId: string | null;
-  isDeleteModalOpen: boolean;
-  showDeleteNoteModal: (id: string) => void;
-  hideDeleteNoteModal: () => void;
+  lastDeletedNote: StickyNote | null;
+  restoreNote: () => void;
+  clearDeletedNote: () => void;
 };
 
 export const useNotesStore = create<NotesState>()(
@@ -50,7 +49,6 @@ export const useNotesStore = create<NotesState>()(
             "[Note] createNote",
           );
         },
-        deleteNoteId: null,
         lastZIndex: 0,
         toolbarConfig: {
           width: STICKY_NOTE_MIN_WIDTH,
@@ -64,22 +62,46 @@ export const useNotesStore = create<NotesState>()(
             false,
             "[Note] updateToolbarConfig",
           ),
+        lastDeletedNote: null,
         removeNote: (id) =>
           set(
-            (state) => ({
-              notes: state.notes.filter((note) => note.id !== id),
-              deleteNoteId: null,
-            }),
+            (state) => {
+              const noteToDelete = state.notes.find((n) => n.id === id);
+              return {
+                notes: state.notes.filter((note) => note.id !== id),
+                lastDeletedNote: noteToDelete || null,
+              };
+            },
             false,
             "[Note] removeNote",
           ),
+        restoreNote: () =>
+          set(
+            (state) => {
+              if (!state.lastDeletedNote) return state;
+              return {
+                notes: [...state.notes, state.lastDeletedNote],
+                lastDeletedNote: null,
+              };
+            },
+            false,
+            "[Note] restoreNote",
+          ),
+        clearDeletedNote: () =>
+          set(
+            { lastDeletedNote: null },
+            false,
+            "[Note] clearDeletedNote",
+          ),
         updateNote: (id, updates) =>
           set(
-            (state) => ({
-              notes: state.notes.map((note) =>
-                note.id === id ? { ...note, ...updates } : note,
-              ),
-            }),
+            (state) => {
+              const index = state.notes.findIndex((n) => n.id === id);
+              if (index === -1) return state;
+              const newNotes = [...state.notes];
+              newNotes[index] = { ...newNotes[index], ...updates };
+              return { notes: newNotes };
+            },
             false,
             "[Note] updateNote",
           ),
@@ -87,37 +109,23 @@ export const useNotesStore = create<NotesState>()(
         bringToFront: (id) =>
           set(
             (state) => {
-              const note = state.notes.find((note) => note.id === id);
-              if (!note) return state;
+              const index = state.notes.findIndex((n) => n.id === id);
+              if (index === -1) return state;
               const newZIndex = state.lastZIndex + 1;
+              const newNotes = [...state.notes];
+              newNotes[index] = { ...newNotes[index], zIndex: newZIndex };
               return {
-                notes: state.notes.map((note) =>
-                  note.id === id ? { ...note, zIndex: newZIndex } : note,
-                ),
+                notes: newNotes,
                 lastZIndex: newZIndex,
               };
             },
             false,
             "[Note] bringToFront",
           ),
-        // Control state for delete confirmation modal Note id
-        isDeleteModalOpen: false,
-        showDeleteNoteModal: (id) =>
-          set(
-            { isDeleteModalOpen: true, deleteNoteId: id },
-            false,
-            "[UI] showDeleteNoteModal",
-          ),
-        hideDeleteNoteModal: () =>
-          set(
-            { isDeleteModalOpen: false, deleteNoteId: null },
-            false,
-            "[UI] hideDeleteNoteModal",
-          ),
       }),
       {
         name: "sticky-notes", // Key name in localStorage
-        // partialize to avoid saving temporary states on localStorage like pendingDeleteNoteId
+        // partialize to avoid saving temporary states on localStorage
         partialize: (state) => ({
           toolbarConfig: state.toolbarConfig,
           notes: state.notes,

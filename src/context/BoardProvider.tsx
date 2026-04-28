@@ -4,14 +4,16 @@ import { BoardContext } from "./boardContext";
 interface BoardProviderProps {
   children: React.ReactNode;
   trashRef: RefObject<HTMLDivElement | null>;
+  boardRef: RefObject<HTMLDivElement | null>;
 }
 
-export function BoardProvider({ children, trashRef }: BoardProviderProps) {
+export function BoardProvider({ children, trashRef, boardRef }: BoardProviderProps) {
   const contextValue = useMemo(
     () => ({
       trashRef,
+      boardRef,
     }),
-    [trashRef],
+    [trashRef, boardRef],
   );
 
   return (

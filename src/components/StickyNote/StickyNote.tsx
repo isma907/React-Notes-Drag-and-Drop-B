@@ -1,4 +1,4 @@
-import React, { use, useCallback, useRef, useState } from "react";
+import React, { use, useCallback, useEffect, useRef, useState } from "react";
 import { useNotesStore } from "../../store/useNotes";
 import { useDrag } from "../../hooks/useDrag";
 import { useResize } from "../../hooks/useResize";
@@ -9,12 +9,13 @@ import "./StickyNote.css";
 const StickyNote = ({ id }: { id: string }) => {
   const note = useNotesStore((s) => s.notes.find((note) => note.id === id));
   const noteRef = useRef<HTMLDivElement>(null);
-  const { trashRef } = use(BoardContext)!;
+  const { trashRef, boardRef } = use(BoardContext)!;
 
   const { onStartDragNote, onDragNote, onDropNote } = useDrag(
     id,
     noteRef,
     trashRef,
+    boardRef,
   );
   const { onStartResizeNote, onResizeNote, onResizeNoteEnd } = useResize(
     id,
@@ -23,6 +24,14 @@ const StickyNote = ({ id }: { id: string }) => {
 
   const updateNote = useNotesStore((s) => s.updateNote);
   const [noteValue, setNoteValue] = useState(note?.textContent ?? "");
+
+  // Sync state if textContent changes externally
+  useEffect(() => {
+    if (note?.textContent !== undefined && note.textContent !== noteValue) {
+      setNoteValue(note.textContent);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [note?.textContent]);
 
   const handleUpdateText = useCallback(() => {
     const current =
@@ -45,8 +54,7 @@ const StickyNote = ({ id }: { id: string }) => {
       style={{
         width: note.size?.width,
         height: note.size?.height,
-        left: note.position.x,
-        top: note.position.y,
+        transform: `translate(${note.position.x}px, ${note.position.y}px)`,
         backgroundColor: note.backgroundColor,
         zIndex: note.zIndex,
       }}

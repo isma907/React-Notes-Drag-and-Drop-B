@@ -6,15 +6,17 @@ import { useNotesStore } from "../store/useNotes";
  * @param id - The unique ID of the Note.
  * @param noteRef - Reference to the Note DOM element.
  * @param trashRef - Reference to the Trash DOM element (to detect collision).
+ * @param boardRef - Reference to the Board DOM element (to enforce boundaries).
  */
 export function useDrag(
   id: string,
   noteRef: React.RefObject<HTMLDivElement | null>,
   trashRef: React.RefObject<HTMLDivElement | null>,
+  boardRef: React.RefObject<HTMLDivElement | null>,
 ) {
   const updateNote = useNotesStore((s) => s.updateNote);
   const bringToFront = useNotesStore((s) => s.bringToFront);
-  const showDeleteNoteModal = useNotesStore((s) => s.showDeleteNoteModal);
+  const removeNote = useNotesStore((s) => s.removeNote);
 
   const isDragging = useRef(false);
 
@@ -60,60 +62,95 @@ export function useDrag(
       if (!isDragging.current || !noteRef.current) return;
 
       // Calculate the new position by subtracting the initial offset
-      const x = e.clientX - offset.current.x;
-      const y = e.clientY - offset.current.y;
+      let x = e.clientX - offset.current.x;
+      let y = e.clientY - offset.current.y;
+
+      // Boundaries enforcement
+      if (boardRef?.current && noteRef.current) {
+        const boardRect = boardRef.current.getBoundingClientRect();
+        const noteRect = noteRef.current.getBoundingClientRect();
+        const maxX = boardRect.width - noteRect.width;
+        const maxY = boardRect.height - noteRect.height;
+        x = Math.max(0, Math.min(x, maxX));
+        y = Math.max(0, Math.min(y, maxY));
+      }
+
       position.current = { x, y };
 
-      // Update the DOM directly for smooth performance (no React re-renders)
-      noteRef.current.style.left = `${x}px`;
-      noteRef.current.style.top = `${y}px`;
+      // Update the DOM directly using transform for better performance
+      noteRef.current.style.transform = `translate(${x}px, ${y}px)`;
+
+      // Visual feedback for trash zone
+      if (trashRef?.current) {
+        const trashRect = trashRef.current.getBoundingClientRect();
+        const noteRect = noteRef.current.getBoundingClientRect();
+        
+        const isOverTrash =
+          noteRect.left < trashRect.right &&
+          noteRect.right > trashRect.left &&
+          noteRect.top < trashRect.bottom &&
+          noteRect.bottom > trashRect.top;
+
+        if (isOverTrash) {
+          trashRef.current.classList.add("trash-active");
+          noteRef.current.classList.add("note-over-trash");
+        } else {
+          trashRef.current.classList.remove("trash-active");
+          noteRef.current.classList.remove("note-over-trash");
+        }
+      }
     },
-    [noteRef],
+    [noteRef, trashRef, boardRef],
   );
 
   /**
    * Executed on releasing the mouse after dragging (Droping the Note).
    */
-  const onDropNote = useCallback(() => {
-    if (!isDragging.current) return;
-    isDragging.current = false;
+  const onDropNote = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      e.currentTarget.releasePointerCapture(e.pointerId);
 
-    const note = useNotesStore.getState().notes.find((note) => note.id === id);
+      const note = useNotesStore.getState().notes.find((note) => note.id === id);
 
-    if (!note) return;
+      if (!note) return;
 
-    if (trashRef.current && noteRef.current) {
-      const trashRect = trashRef.current.getBoundingClientRect();
-      const noteRect = noteRef.current.getBoundingClientRect();
+      if (trashRef.current && noteRef.current) {
+        trashRef.current.classList.remove("trash-active");
+        noteRef.current.classList.remove("note-over-trash");
 
-      // Check if we dropped the note into Trash FIRST
-      const isOverTrash =
-        noteRect.left < trashRect.right &&
-        noteRect.right > trashRect.left &&
-        noteRect.top < trashRect.bottom &&
-        noteRect.bottom > trashRect.top;
+        const trashRect = trashRef.current.getBoundingClientRect();
+        const noteRect = noteRef.current.getBoundingClientRect();
 
-      if (isOverTrash) {
-        noteRef.current.style.left = `${initialPosition.current.x}px`;
-        noteRef.current.style.top = `${initialPosition.current.y}px`;
-        showDeleteNoteModal(note.id);
-        return;
-      }
+        // Check if we dropped the note into Trash FIRST
+        const isOverTrash =
+          noteRect.left < trashRect.right &&
+          noteRect.right > trashRect.left &&
+          noteRect.top < trashRect.bottom &&
+          noteRect.bottom > trashRect.top;
 
-      // Normal drop - update position only if changed
-      else {
-        const hasChanged =
-          note.position.x !== position.current.x ||
-          note.position.y !== position.current.y;
+        if (isOverTrash) {
+          removeNote(note.id);
+          return;
+        }
 
-        if (hasChanged) {
-          updateNote(id, {
-            position: position.current,
-          });
+        // Normal drop - update position only if changed
+        else {
+          const hasChanged =
+            note.position.x !== position.current.x ||
+            note.position.y !== position.current.y;
+
+          if (hasChanged) {
+            updateNote(id, {
+              position: position.current,
+            });
+          }
         }
       }
-    }
-  }, [id, noteRef, trashRef, showDeleteNoteModal, updateNote]);
+    },
+    [id, noteRef, trashRef, removeNote, updateNote],
+  );
 
   return {
     onStartDragNote,
