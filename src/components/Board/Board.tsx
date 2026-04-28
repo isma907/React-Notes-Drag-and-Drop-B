@@ -20,7 +20,7 @@ const Board = () => {
   const handleAddNote = useCallback(
     (e: React.MouseEvent) => {
       if (e.target !== e.currentTarget || !boardRef.current) return;
-      
+
       const rect = boardRef.current.getBoundingClientRect();
       let x = e.clientX - rect.left;
       let y = e.clientY - rect.top;

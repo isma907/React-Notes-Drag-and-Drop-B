@@ -68,10 +68,10 @@ export const useNotesStore = create<NotesState>()(
             (state) => {
               const noteToDelete = state.notes[id];
               if (!noteToDelete) return state;
-              
+
               const newNotes = { ...state.notes };
               delete newNotes[id];
-              
+
               return {
                 notes: newNotes,
                 lastDeletedNote: noteToDelete,
@@ -85,7 +85,10 @@ export const useNotesStore = create<NotesState>()(
             (state) => {
               if (!state.lastDeletedNote) return state;
               return {
-                notes: { ...state.notes, [state.lastDeletedNote.id]: state.lastDeletedNote },
+                notes: {
+                  ...state.notes,
+                  [state.lastDeletedNote.id]: state.lastDeletedNote,
+                },
                 lastDeletedNote: null,
               };
             },
