@@ -20,19 +20,12 @@ export const ToolBar = () => {
 
   useEffect(() => {
     const id = setTimeout(() => {
-      updateToolbarConfig({ width });
+      updateToolbarConfig({ width, height });
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(id);
-  }, [width, updateToolbarConfig]);
+  }, [width, height, updateToolbarConfig]);
 
-  useEffect(() => {
-    const id = setTimeout(() => {
-      updateToolbarConfig({ height });
-    }, DEBOUNCE_MS);
-
-    return () => clearTimeout(id);
-  }, [height, updateToolbarConfig]);
 
   const handleCreateNote = () => {
     createNote({

@@ -13,7 +13,7 @@ import { createStickyNote } from "../utils/stickyNotes.utils";
 
 type NotesState = {
   notes: Record<string, StickyNote>;
-  createNote: (position: StickyNotePosition) => void;
+  createNote: (position: StickyNotePosition, dimension?: StickyNoteSize) => void;
   toolbarConfig: StickyNoteSize;
   updateToolbarConfig: (updates: Partial<StickyNoteSize>) => void;
 
@@ -32,11 +32,11 @@ export const useNotesStore = create<NotesState>()(
     persist(
       (set) => ({
         notes: {},
-        createNote: (position) => {
+        createNote: (position, dimension) => {
           set(
             (state) => {
               const newNote = createStickyNote(
-                state.toolbarConfig,
+                dimension ? dimension : state.toolbarConfig,
                 position,
                 state.lastZIndex + 1,
               );

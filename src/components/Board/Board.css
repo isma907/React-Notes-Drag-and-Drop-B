@@ -28,3 +28,14 @@
   color: white;
   box-shadow: var(--trash-shadow);
 }
+
+
+.drag-create-guidelines {
+  position: absolute;
+  border: 1px #74feff dashed;
+}
+
+
+.drag-create-guidelines.not-allowed {
+  border-color: #ff4b4e;
+}

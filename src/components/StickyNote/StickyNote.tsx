@@ -20,6 +20,7 @@ const StickyNote = ({ id }: { id: string }) => {
   const { onStartResizeNote, onResizeNote, onResizeNoteEnd } = useResize(
     id,
     noteRef,
+    boardRef
   );
 
   const updateNote = useNotesStore((s) => s.updateNote);

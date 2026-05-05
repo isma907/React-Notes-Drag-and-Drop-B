@@ -1,6 +1,7 @@
 import { useRef, useCallback } from "react";
 import { useNotesStore } from "../store/useNotes";
 import {
+  STICKY_NOTE_MAX_WIDTH,
   STICKY_NOTE_MIN_HEIGHT,
   STICKY_NOTE_MIN_WIDTH,
 } from "../constants/stickyNotes.constants";
@@ -14,6 +15,7 @@ import type { StickyNoteRect } from "../interfaces/StickyNote";
 export function useResize(
   id: string,
   noteRef: React.RefObject<HTMLDivElement | null>,
+  boardRef: React.RefObject<HTMLDivElement | null>,
 ) {
   const updateNote = useNotesStore((s) => s.updateNote);
   const bringToFront = useNotesStore((s) => s.bringToFront);
@@ -55,24 +57,41 @@ export function useResize(
    */
   const onResizeNote = useCallback(
     (e: React.PointerEvent) => {
-      if (!resizing.current || !noteRef.current) return;
+      if (!resizing.current || !noteRef.current || !boardRef.current) return;
 
-      // Check with minHeight and minWidth to avoid resizing too small.
+
+      const boardRect = boardRef.current.getBoundingClientRect();
+      const noteRect = noteRef.current.getBoundingClientRect()
+
+
+      const nextWidth = initialPosition.current.width + (e.clientX - initialPosition.current.x);
+      const nextHeight = initialPosition.current.height + (e.clientY - initialPosition.current.y);
+
+
+      const widthAvailableOffset = boardRect.width - noteRect.left;
+      const heightAvailableOffset = boardRect.height - noteRect.top;
+
       const width = Math.max(
         STICKY_NOTE_MIN_WIDTH,
-        initialPosition.current.width + (e.clientX - initialPosition.current.x),
-      );
+        Math.min(
+          nextWidth,
+          Math.min(widthAvailableOffset, STICKY_NOTE_MAX_WIDTH)
+        )
+      )
+
       const height = Math.max(
         STICKY_NOTE_MIN_HEIGHT,
-        initialPosition.current.height +
-          (e.clientY - initialPosition.current.y),
-      );
+        Math.min(
+          nextHeight,
+          Math.min(heightAvailableOffset, STICKY_NOTE_MAX_WIDTH)
+        )
+      )
 
       // Update the DOM directly for better performance
       noteRef.current.style.width = `${width}px`;
       noteRef.current.style.height = `${height}px`;
     },
-    [noteRef],
+    [noteRef, boardRef],
   );
 
   /**

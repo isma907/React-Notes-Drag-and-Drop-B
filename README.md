@@ -21,6 +21,7 @@ Finally, user experience and data safety are baked directly into the design. Per
 ## ✨ Key Features
 
 - **Multiple Creation Methods**: Generate new notes by **double-clicking** anywhere on the empty board (centered at cursor) or by using the **floating ToolBar**.
+- Creation by **Press Click and Drag** in board - Live Coding technical interview feature.
 - **Dynamic Interactions**: Drag and drop notes using the top handler and resize them from the bottom-right corner.
 - **Smart Stacking**: Interacting with any note automatically brings it to the front (`z-index` management).
 - **Undo System**: Deleted a note by mistake? Use the **Undo Toast** to restore it instantly within 5 seconds.

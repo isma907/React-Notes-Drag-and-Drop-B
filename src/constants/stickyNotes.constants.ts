@@ -3,3 +3,6 @@ export const STICKY_NOTE_MAX_WIDTH = 400;
 
 export const STICKY_NOTE_MIN_HEIGHT = 200;
 export const STICKY_NOTE_MAX_HEIGHT = 500;
+
+export const MIN_DRAG_CREATION_WIDTH = 150;
+export const MIN_DRAG_CREATION_HEIGHT = 150
